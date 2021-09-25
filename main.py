@@ -2,12 +2,55 @@ import sys
 import pygame
 import random
 
+pygame.init()
+
 # colors
 GREY = (50, 50, 50)
 WHITE = (255, 255, 255)
 RED = (255, 0, 0)
 DARK_RED = (200, 0, 0)
 GREEN = (0, 255, 0)
+BLUE = (0, 0, 255)
+DARK_BLUE = (0, 0, 200)
+
+
+class Button:
+
+    buttons = []
+
+    def __init__(self, x, y, width, height, color, dark_color, text='', font_color=(0, 0, 0), font_size=20):
+        Button.buttons.append(self)
+        self.x = x
+        self.y = y
+        self.width = width
+        self.height = height
+        self.color = color
+        self.normal_color = color
+        self.dark_color = dark_color
+        self.text = text
+        self.font_color = font_color
+        self.font_size = font_size
+        self.border_size = 5
+
+    def draw(self, win):
+        pygame.draw.rect(win, (0, 0, 0), (self.x - self.border_size, self.y - self.border_size,
+                                          self.width + self.border_size*2, self.height + self.border_size*2), 0)
+        pygame.draw.rect(win, self.color, (self.x, self.y, self.width, self.height), 0)
+        if self.text != '':
+            font = pygame.font.Font('freesansbold.ttf', self.font_size)
+            text = font.render(self.text, True, self.font_color)
+            win.blit(text, (self.x + (self.width/2 - text.get_width()/2),
+                            self.y + (self.height / 2 - text.get_height() / 2)))
+        if self.is_mouse(pygame.mouse.get_pos()):
+            self.color = self.dark_color
+        else:
+            self.color = self.normal_color
+
+    def is_mouse(self, pos):
+        if self.x < pos[0] < self.x + self.width:
+            if self.y < pos[1] < self.y + self.height:
+                return True
+        return False
 
 
 class VisualArray:
@@ -71,6 +114,8 @@ class VisualArray:
 
 def redraw_window(win):
     win.fill(GREY)
+    for b in Button.buttons:
+        b.draw(win)
 
 
 def main():
@@ -81,8 +126,15 @@ def main():
 
     visual_array = VisualArray()
 
+    restart_button = Button(900, 10, 80, 40, RED, DARK_RED, "RESTART", font_size=15)
+
+    button_y = 100
+    button_width = 150
+    button_height = 50
+    button_bubble_sort = Button(10, button_y, button_width, button_height, BLUE, DARK_BLUE, "BubbleSort")
+
     loop = True
-    x = True
+    ready_to_start = True
     clock = pygame.time.Clock()
     while loop:
         clock.tick(60)
@@ -92,9 +144,16 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 loop = False
-            if event.type == pygame.MOUSEBUTTONDOWN and x:
-                x = False
-                visual_array.bubble_sort(win)
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                pos = pygame.mouse.get_pos()
+                if ready_to_start:
+                    if button_bubble_sort.is_mouse(pos):
+                        ready_to_start = False
+                        visual_array.bubble_sort(win)
+                elif restart_button.is_mouse(pos):
+                    visual_array = VisualArray()
+                    ready_to_start = True
+
         pygame.display.update()
 
 
