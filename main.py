@@ -185,6 +185,7 @@ def redraw_window(win):
 
 
 def main():
+    pygame.display.set_caption("Sorting Visualizer")
 
     width = 1000
     height = 800
@@ -193,7 +194,6 @@ def main():
     visual_array = VisualArray()
 
     restart_button = Button(900, 10, 80, 40, RED, DARK_RED, "RESTART", font_size=15)
-
     button_y = 100
     button_width = 150
     button_height = 50
