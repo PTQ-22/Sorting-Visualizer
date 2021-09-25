@@ -111,6 +111,23 @@ class VisualArray:
 
         self.draw_green(win)
 
+    def selection_sort(self, win):
+        n = len(self.array)
+        for i in range(0, n-1):
+            mini = self.array[i]
+            index_mini = i
+            for j in range(i+1, n):
+                if self.array[j] < mini:
+                    mini = self.array[j]
+                    index_mini = j
+                self.draw_sort(win, j)
+
+            pom = self.array[i]
+            self.array[i] = self.array[index_mini]
+            self.array[index_mini] = pom
+
+        self.draw_green(win)
+
 
 def redraw_window(win):
     win.fill(GREY)
@@ -132,6 +149,7 @@ def main():
     button_width = 150
     button_height = 50
     button_bubble_sort = Button(10, button_y, button_width, button_height, BLUE, DARK_BLUE, "BubbleSort")
+    button_selection_sort = Button(200, button_y, button_width, button_height, BLUE, DARK_BLUE, "SelectionSort")
 
     loop = True
     ready_to_start = True
@@ -150,6 +168,9 @@ def main():
                     if button_bubble_sort.is_mouse(pos):
                         ready_to_start = False
                         visual_array.bubble_sort(win)
+                    elif button_selection_sort.is_mouse(pos):
+                        ready_to_start = False
+                        visual_array.selection_sort(win)
                 elif restart_button.is_mouse(pos):
                     visual_array = VisualArray()
                     ready_to_start = True
