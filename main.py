@@ -87,7 +87,7 @@ class VisualArray:
             else:
                 pygame.draw.rect(win, WHITE, (x, y, 10, height), 0)
         pygame.display.update()
-        # pygame.time.wait(10)
+        pygame.time.wait(5)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -177,6 +177,41 @@ class VisualArray:
 
             self.merge(win, start, middle, end)
 
+    def quick_sort(self, win):
+        n = len(self.array)
+
+        self.quick_sort_algo(win, 0, n-1)
+
+        self.draw_green(win)
+
+    def quick_sort_algo(self, win, start, end):
+        i = start
+        j = end
+        pivot = self.array[(start + end) // 2]
+
+        do = False  # do while
+        while i <= j or not do:
+            do = True
+
+            while self.array[i] < pivot:
+                i += 1
+                self.draw_sort(win, i, pivot)
+            while self.array[j] > pivot:
+                j -= 1
+                self.draw_sort(win, j, pivot)
+
+            if i <= j:
+                pom = self.array[i]
+                self.array[i] = self.array[j]
+                self.array[j] = pom
+                i += 1
+                j -= 1
+
+        if start < j:
+            self.quick_sort_algo(win, start, j)
+        if end > i:
+            self.quick_sort_algo(win, i, end)
+
 
 def redraw_window(win):
     win.fill(GREY)
@@ -200,6 +235,7 @@ def main():
     button_bubble_sort = Button(10, button_y, button_width, button_height, BLUE, DARK_BLUE, "BubbleSort")
     button_selection_sort = Button(200, button_y, button_width, button_height, BLUE, DARK_BLUE, "SelectionSort")
     button_merge_sort = Button(390, button_y, button_width, button_height, BLUE, DARK_BLUE, "MergeSort")
+    button_quick_sort = Button(580, button_y, button_width, button_height, BLUE, DARK_BLUE, "QuickSort")
 
     loop = True
     ready_to_start = True
@@ -224,6 +260,9 @@ def main():
                     elif button_merge_sort.is_mouse(pos):
                         ready_to_start = False
                         visual_array.merge_sort(win)
+                    elif button_quick_sort.is_mouse(pos):
+                        ready_to_start = False
+                        visual_array.quick_sort(win)
                 elif restart_button.is_mouse(pos):
                     visual_array = VisualArray()
                     ready_to_start = True
